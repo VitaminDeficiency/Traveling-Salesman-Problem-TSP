@@ -1,4 +1,9 @@
 #include <stdio.h>
+#include "_heapSort.h"
+
 int main(){
-    printf("Nguyen Hoai Y");
+    int i;
+    float a[8] = {3,4,1,2,7,5,9};
+    _heapSort(a,6);
+    for(i = 0; i < 7; i++) printf("%.2f  ", a[i]);
 }

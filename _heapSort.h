@@ -1,5 +1,4 @@
 #include <stdio.h>
-
 void swap(float *a, float *b)
 {
     float temp;

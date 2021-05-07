@@ -4,7 +4,7 @@ int matrix[25][25], visited_cities[10], limit, cost = 0;
  
 int tsp(int c)
 {
-    int count, nearest_city = 999;
+    int count, nearest_city = 999;  // Tìm min nên cho trước +vô cực
     int minimum = 999, temp;
     for(count = 0; count < limit; count++)
     {
@@ -44,19 +44,20 @@ void minimum_cost(int city)
 int main()
 { 
     int i, j;
-    printf("Enter Total Number of Cities:\t");
+    printf("Nhap vao tong so nut:\t");
     scanf("%d", &limit);
-    printf("\nEnter Cost Matrix\n");
+    printf("\nNhap do dai cac canh");
     for(i = 0; i < limit; i++)
     {
-        printf("\nEnter %d Elements in Row[%d]\n", limit, i + 1);
+        printf("\nNut %d:\n",i + 1);
         for(j = 0; j < limit; j++)
         {
+            printf("  Nhap do dai thu %d:\t", j + 1);
             scanf("%d", &matrix[i][j]);
         }
     visited_cities[i] = 0;
     }
-    printf("\nEntered Cost Matrix\n");
+    printf("\nMatrix cua quang duong\n");
     for(i = 0; i < limit; i++)
     {
         printf("\n");
@@ -65,8 +66,8 @@ int main()
             printf("%d ", matrix[i][j]);
         }
     }
-    printf("\n\nPath:\t");
+    printf("\n\nThu tu thanh pho:\t");
     minimum_cost(0);
-    printf("\n\nMinimum Cost: \t");
+    printf("\n\nTong quang duong ngan nhat: \t");
     printf("%d\n", cost);
 }

@@ -1,21 +1,21 @@
 #include <stdio.h>
 
-int matrix[25][25], visited_cities[10], limit, cost = 0;
- 
+int matrix[25][25],         // Kiểu mảng 2 chiều ứng với matrix của các nút (hàng) và độ dài (cột)
+    visited_cities[10],     // Đã đi qua
+    n,                      // Số lượng thành phố
+    cost = 0;               // Tổng độ dài quãng đường
+
 int tsp(int c)
 {
-    int count, nearest_city = 999;  // Tìm min nên cho trước +vô cực
+    int i, nearest_city = 999;  // Tìm min nên cho trước +vô cực
     int minimum = 999, temp;
-    for(count = 0; count < limit; count++)
+    for(i = 0; i < n; i++)
     {
-        if((matrix[c][count] != 0) && (visited_cities[count] == 0))
+        if(matrix[c][i] && !visited_cities[i])  // Xét Matrix !=0 và Visited ==0
         {
-            if(matrix[c][count] < minimum)
-            {
-                minimum = matrix[count][0] + matrix[c][count];
-            }
-            temp = matrix[c][count];
-            nearest_city = count;
+            if(matrix[c][i] < minimum) minimum = matrix[i][0] + matrix[c][i];
+            temp = matrix[c][i];
+            nearest_city = i;
         }
     }
     if(minimum != 999)
@@ -24,8 +24,8 @@ int tsp(int c)
     }
     return nearest_city;
 }
- 
-void minimum_cost(int city)
+
+void minimum_cost(int city) // Tìm kiếm quãng đường ngắn nhất
 {
     int nearest_city;
     visited_cities[city] = 1;
@@ -40,28 +40,28 @@ void minimum_cost(int city)
     }
     minimum_cost(nearest_city);
 }
- 
+
 int main()
 { 
     int i, j;
     printf("Nhap vao tong so nut:\t");
-    scanf("%d", &limit);
+    scanf("%d", &n);
     printf("\nNhap do dai cac canh");
-    for(i = 0; i < limit; i++)
+    for(i = 0; i < n; i++)
     {
         printf("\nNut %d:\n",i + 1);
-        for(j = 0; j < limit; j++)
+        for(j = 0; j < n; j++)
         {
             printf("  Nhap do dai thu %d:\t", j + 1);
             scanf("%d", &matrix[i][j]);
         }
     visited_cities[i] = 0;
     }
-    printf("\nMatrix cua quang duong\n");
-    for(i = 0; i < limit; i++)
+    printf("\nMatrix cua quang duong cac nut\n");
+    for(i = 0; i < n; i++)
     {
         printf("\n");
-        for(j = 0; j < limit; j++)
+        for(j = 0; j < n; j++)
         {
             printf("%d ", matrix[i][j]);
         }

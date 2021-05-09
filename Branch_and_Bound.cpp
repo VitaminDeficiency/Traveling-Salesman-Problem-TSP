@@ -1,16 +1,15 @@
 #include <stdio.h>
 #include <string.h>
 #define sz 10
-#define _fileName "DuLieuVao.txt"
+#define _fileName "DuLieu.txt"
 
-typedef struct
-{
-    float Do_Dai;
-    int Da_Di_qua;
-    int x, y;
-}doanDuong;
+int MaTran[sz][sz];
+int Da_Di_qua[sz];
+int DoDai = 0;
+int x[100];
+int n;
 
-void _readFile(doanDuong a[][sz], int *n)
+void _readFile(int *n)
 {
     int i, j;
     FILE *f;
@@ -20,21 +19,38 @@ void _readFile(doanDuong a[][sz], int *n)
         printf("File Loi!");
         return;
     }
-    fscanf(f,"%d",n);       // Ma trận vuông
-    for (i = 0; i < *n; i++)
-        for (j = 0; j < *n; j++)
-        {
-            fscanf(f,"%f",&a[i][j].Do_Dai);
-            a[i][j].x = i;
-            a[i][j].y = j;
-            a[i][j].Da_Di_qua = 0;
-        }
+    fscanf(f,"%d",n);
+    for (i = 0; i < *n; i++){
+        for (j = 0; j < *n; j++) fscanf(f,"%d",&MaTran[i][j]);
+        Da_Di_qua[i] = 0;
+    }
     fclose(f);
 }
+
+int tsp(int c)
+{
+    int i, nearest_city = 999, minimum = 999;
+    if (DoDai + nearest_city*(n-i+1) >= minimum) return;
+    for (int j = 1; j<n; j++)
+    {
+        if (Da_Di_qua[j])
+        {
+            x[i] = j;
+            Da_Di_qua[j] = 0;
+            DoDai += MaTran[x[i-1]][j];
+            if (i==n) if (DoDai+MaTran[x[n]][x[1]]<minimum) nearest_city = DoDai+MaTran[x[n]][x[1]]; else tsp(i+1);
+            DoDai -= MaTran[x[i-1]][j];
+            Da_Di_qua[j] = 1;
+        }
+    }
+}
+
 int main()
 {
     int n;
-    doanDuong a[sz][sz];
-    _readFile(a, &n);
-    printf("%.2f ",a[2][3].Do_Dai);
+    _readFile(&n);
+    printf("\n\nThu tu thanh pho:\t");
+    tsp(2);
+    printf("\n\nTong quang duong ngan nhat: \t");
+    printf("%d\n",DoDai);
 }

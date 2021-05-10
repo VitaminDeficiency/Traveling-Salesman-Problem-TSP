@@ -73,6 +73,18 @@ void _attemp(int i)
     }
 }
 
+void _printMaTran()
+{
+    printf("Ma tran bieu dien:\n");
+    for (int i = 0; i < n; i++)
+    {
+        printf("\t");
+        for (int j = 0; j < n; j++)
+            printf("%d ",MaTran[i][j]);
+        printf("\n");
+    }
+}
+
 void _print()
 {
     printf("Thu tu cac thanh pho: ");
@@ -87,6 +99,7 @@ void _print()
 int main()
 {
     _readFile(&n, &m);
+    _printMaTran();
     _initialize();
     _attemp(1);
     _print();

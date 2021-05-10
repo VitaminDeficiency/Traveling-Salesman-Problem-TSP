@@ -6,13 +6,13 @@
 int n;                  // Số lượng thành phố
 int m;                  // Số lượng các cạnh
 int maxE = 1000;
-int maxC = 100 * maxE;
-int MaTran[sz][sz];
-int X[sz];   // store all possible ways
-int BestWay[sz]; // store best way
-int T[sz];   // store cost from x[0] to X[i]
-int Visited[sz];    // Visited[i] = True if not visit i
-int BestConfig = maxC;  // best cost
+int maxC = 1000;
+int MaTran[sz][sz];     // Ma trận cấp sz
+int BestWay[sz];        // Thứ tự quãng đường tốt nhất
+int X[sz];              // store all possible ways
+int T[sz];              // store cost from x[0] to X[i]
+int BestConfig;         // Lưu trữ cách tốt nhất tạm thời
+bool Visited[sz];       // Visited[i] = True khi chưa ghé thăm thành phố i
 
 void _readFile(int *n, int *m)
 {
@@ -29,7 +29,7 @@ void _readFile(int *n, int *m)
     fclose(f);
 }
 
-void _initialize()
+void _khoiTao()
 {
     for (int i = 0; i < n; i ++)
     {
@@ -38,15 +38,15 @@ void _initialize()
         X[i] = 0;
         T[i] = 0;
     }
-    Visited[0] = false;    // start from vertice 0
+    Visited[0] = false; // start from vertice 0
     BestConfig = maxC;
 }
 
-void _attemp(int i)
+void _tsp(int i)
 {
     for (int j = 1; j < n; j ++)
     {
-        if (Visited[j])
+        if (Visited[j]) // Kiểm tra xem thành phố thứ j đã ghé qua chưa
         {
             X[i] = j;
             T[i] = T[i - 1] + MaTran[X[i - 1]][j];
@@ -54,8 +54,8 @@ void _attemp(int i)
             {
                 if (i < n - 1)
                 {
-                    Visited[j] = false;
-                    _attemp(i + 1);
+                    Visited[j] = false; // Đánh dấu đã ghé qua
+                    _tsp(i + 1);        // Phân nhánh
                     Visited[j] = true;
                 } else
                 {
@@ -63,12 +63,13 @@ void _attemp(int i)
                     {
                         for (int k = 0; k < n; k ++)
                         {
-                            BestWay[k] = X[k];
+                            BestWay[k] = X[k];                  // Thứ tự quãng đường tốt nhất tạm thời
                         }
-                        BestConfig = T[i] + MaTran[X[i]][0];
+                        BestConfig = T[i] + MaTran[X[i]][0];    // Đã tìm được giá trị tốt nhất tạm thời
                     }
                 }
             }
+            //printf("T "); for (int a = 0; a < n; a++)  printf("%d  ",T[a]);
         }
     }
 }
@@ -90,9 +91,9 @@ void _print()
     printf("Thu tu cac thanh pho: ");
     for (int i = 0; i < n; i ++)
     {
-        printf(" %d ->", BestWay[i] + 1);
+        printf(" %c ->", BestWay[i] + 65);
     }
-    printf(" 1 \n");
+    printf(" %c\n", BestWay[0] + 65);
     printf("Tong do dai: %d", BestConfig);
 }
 
@@ -100,7 +101,7 @@ int main()
 {
     _readFile(&n, &m);
     _printMaTran();
-    _initialize();
-    _attemp(1);
+    _khoiTao();
+    _tsp(1);
     _print();
 }

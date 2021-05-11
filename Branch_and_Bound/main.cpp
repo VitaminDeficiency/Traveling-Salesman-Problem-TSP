@@ -9,10 +9,12 @@ int maxE = 1000;
 int maxC = 1000;
 int MaTran[sz][sz];     // Ma trận cấp sz
 int BestWay[sz];        // Thứ tự quãng đường tốt nhất
-int X[sz];              // store all possible ways
-int T[sz];              // store cost from x[0] to X[i]
+int X[sz];              // store all possible ways // lưu trữ đường tạm thời
+int T[sz];              // store cost from x[0] to X[i] // Lưu trữ độ dài của đường được chọn tạm thời
 int BestConfig;         // Lưu trữ cách tốt nhất tạm thời
 bool Visited[sz];       // Visited[i] = True khi chưa ghé thăm thành phố i
+
+int b = 0;
 
 void _readFile(int *n, int *m)
 {
@@ -38,18 +40,19 @@ void _khoiTao()
         X[i] = 0;
         T[i] = 0;
     }
-    Visited[0] = false; // start from vertice 0
+    Visited[2] = false; // Bắt đầu từ thành phố 1 suy ra đã ghé thăm = 0
     BestConfig = maxC;
 }
 
 void _tsp(int i)
 {
+    printf("%d \n", i);
     for (int j = 1; j < n; j ++)
     {
-        if (Visited[j]) // Kiểm tra xem thành phố thứ j đã ghé qua chưa
+        if (Visited[j]) // Kiểm tra xem thành phố thứ j đã ghé qua chưa ( Visited != 0 )
         {
             X[i] = j;
-            T[i] = T[i - 1] + MaTran[X[i - 1]][j];
+            T[i] = T[i - 1] + MaTran[X[i - 1]][X[i]];
             if (T[i] < BestConfig)
             {
                 if (i < n - 1)
@@ -65,11 +68,13 @@ void _tsp(int i)
                         {
                             BestWay[k] = X[k];                  // Thứ tự quãng đường tốt nhất tạm thời
                         }
-                        BestConfig = T[i] + MaTran[X[i]][0];    // Đã tìm được giá trị tốt nhất tạm thời
+                        BestConfig = T[i] + MaTran[X[i]][0];    // Giá trị quaãng đường tốt nhất tạm thời
                     }
                 }
             }
-            //printf("T "); for (int a = 0; a < n; a++)  printf("%d  ",T[a]);
+            printf("T = "); for (int a = 0; a < n; a++)  printf("%d ",T[a]); printf("\n");
+            printf("X = "); for (int a = 0; a < n; a++)  printf("%d ",X[a]); printf("\n");
+            printf("Best = "); for (int a = 0; a < n; a++)  printf("%d ",BestWay[a]); printf("\n\n");
         }
     }
 }
@@ -102,6 +107,6 @@ int main()
     _readFile(&n, &m);
     _printMaTran();
     _khoiTao();
-    _tsp(1);
+    _tsp(2);
     _print();
 }

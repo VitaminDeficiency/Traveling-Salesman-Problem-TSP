@@ -4,23 +4,28 @@
 #define _fileName2 "GreedyGrapth.txt"
 #define size 30
 
-typedef struct{
+typedef struct
+{
 	int Quang_Duong;
 	int front, rear;
 	bool Chua_Di_Qua;
-}Way;
+} Way;
 
-void _readFile(Way MaTran[][size], int *n, int *m){
+void _readFile(Way MaTran[][size], int *n, int *m)
+{
 	int i,j;
 	FILE *f;
 	f=fopen(_fileName,"r");
-	if (f==NULL){
+	if (f==NULL)
+	{
 		printf("File loi!");
 		return;
 	}
 	fscanf(f,"%d%d",n,m);
-	for(i=0; i<*n; i++){
-		for(j=0; j<*n; j++){
+	for(i=0; i < *n; i++)
+	{
+		for(j=0; j < *m; j++)
+		{
 			fscanf(f,"%d", &MaTran[i][j].Quang_Duong);
 			MaTran[i][j].front=i;
 			MaTran[i][j].rear =j;
@@ -30,64 +35,69 @@ void _readFile(Way MaTran[][size], int *n, int *m){
 	fclose(f);
 }
 
-
-Way tim_canh_nho_nhat(Way MaTran[][size], int n, int i, int *rear){
-	Way ca;
-	int j;
-	float do_dai_nn=3.40282e+38;
-	for(j=0; j<n; j++){
-			if ((i!=j)&&(!MaTran[i][j].Chua_Di_Qua  ) && (MaTran[i][j].Quang_Duong<do_dai_nn)){
-			   do_dai_nn = MaTran[i][j].Quang_Duong;
-			   ca=MaTran[i][j];
-			   MaTran[i][j].Chua_Di_Qua = true;	// AB
-			   MaTran[j][i].Chua_Di_Qua = true;	// BA
-			   *rear=j;
-			}
+Way _findEdgeMin(Way MaTran[][size], int n, int i, int *rear)	// Tìm cạnh tiếp theo nhỏ nhất
+{
+	Way edge;
+	float min = 10000;
+	for(int j=0; j<n; j++)
+	{
+		if ((i!=j) && (!MaTran[i][j].Chua_Di_Qua) && (MaTran[i][j].Quang_Duong < min))	// Chưa được đi qua và tìm kiếm cạnh tiếp theo nhỏ nhất
+		{
+		    min = MaTran[i][j].Quang_Duong;	// Coi biến min là giá trị nhỏ nhất tạm thời cho mỗi vòng lặp
+		    edge = MaTran[i][j];				// Đồng thời lưu lại cạnh này vào biến edge
+			MaTran[i][j].Chua_Di_Qua = true;	// AB đánh dấu đã đi qua 
+		    MaTran[j][i].Chua_Di_Qua = true;	// BA như AB do ma trận vuông
+			*rear = j;
+		}
 	}
-	return ca;
+	return edge;	// Kết thúc quá trình tìm kiếm ta xuất cạnh bé nhất vừa tìm được
 }
 
-int tao_chu_trinh(Way PA[],int k, int rear){
+int _createWay(Way PA[], int k, int rear)	// Tạo chu trình đường
+{
 	int t;
-	for (t=0; t<k; t++)
-		if(rear==PA[t].front) return 1;
+	for (t=0; t<k; t++) if(rear == PA[t].front) return 1;
 	return 0;
 }
 
-void _greedy(Way MaTran[][size], int n, int front, Way PA[]){
-	Way ca;
-	int rear, diem_dau=front, k=0;
-	while(k<n-1){
-		ca = tim_canh_nho_nhat(MaTran,n,front, &rear);
-		if(!tao_chu_trinh(PA,k, rear)) {
-			PA[k]=ca;
-			front= rear;
+void _greedy(Way MaTran[][size], int n, int front, Way PA[])
+{
+	Way edge;
+	int rear, frontDot = front, k = 0;
+	while(k < n-1){
+		edge = _findEdgeMin(MaTran,n,front,&rear);	// Cạnh bé nhất được tìm từ nút đang xét
+		if(!_createWay(PA, k, rear))				// Nếu _createWay == 0 thì ...
+		{
+			PA[k] = edge;
+			front = rear;
 			k++;
-		}
-		else {
+		} else
+		{
 			front=PA[k-1].rear;
 		}
-		
-		PA[n-1]=MaTran[rear][diem_dau]; //Noi diem rear voi diem front
+		PA[n-1]=MaTran[rear][frontDot];		// Nối rear với front
 	}
 }
 
-void _print(Way PA[], int n){
-	int i, sum = 0;
+void _print(Way PA[], int n)
+{
+	int i, tong = 0;
 	printf("Thu tu cac thanh pho: ");
-	for(i=0; i<n; i++){
-		sum += PA[i].Quang_Duong;
+	for(i=0; i<n; i++)
+	{
+		tong += PA[i].Quang_Duong;
 		printf("%c -> ", PA[i].front+65);
 		if (i == n-1) printf ("%c",PA[i].rear+65);
 	}
-	printf("\nTong do dai quang duong: %d\n", sum);
+	printf("\nTong do dai quang duong: %d\n", tong);
 }
 
-
-void _printMatrix(Way MaTran[][size],int n){
+void _printMatrix(Way MaTran[][size],int n)
+{
 	int i, j;
 	printf("Ma tran:\n");
-	for(i=0;i<n;i++){
+	for(i=0;i<n;i++)
+	{
 		printf("\t");
 		for(j=0;j<n;j++) printf("%d ", MaTran[i][j].Quang_Duong);
 		printf("\n");
@@ -97,24 +107,25 @@ void _printMatrix(Way MaTran[][size],int n){
 void _printFile(Way PA[], int *n)
 {
 
-    int i, j, sum;
+    int i;
     FILE *f;
     f = fopen(_fileName2,"w");
-    for (i = 0; i < *n; i++) fprintf(f,"%c  %c  %d\n",PA[i].front+65,PA[i].rear+65,PA[i].Quang_Duong);
+    for (i = 0; i < *n; i++) fprintf(f,"%c  %c  %d\n", PA[i].front+65, PA[i].rear+65, PA[i].Quang_Duong);
     fclose(f);
 }
 
-int main(){
+int main()
+{
 	Way MaTran[size][size];
 	int n,m;
 	_readFile(MaTran,&n,&m);
 	_printMatrix(MaTran,n);
 	Way PA[n];
-	char tpxp='a';
+	char x;
 	printf("Nhap diem xuat phat (a,b,c,...):  ");
-	scanf("%c",&tpxp);
-	if (tpxp >= 97) tpxp -= 32; //Doi chu thuong thanh chu hoa
-	_greedy(MaTran, n,tpxp-65,PA); //Doi ki tu thanh so
+	scanf("%c",&x);
+	if (x >= 97) x-=32;         // Chữ thường sang chữ hoa
+	_greedy(MaTran, n,x-65,PA); // Đổi kí tự thành số
 	_print(PA,n);
 	_printFile(PA,&n);
 	return 0;

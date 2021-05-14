@@ -2,16 +2,16 @@
 #include <stdlib.h>
 
 #define _fileName "DuLieu.txt"
-#define _fileName2 "DoThi.txt"
-#define sz 10
+#define _fileName2 "B&BGrapth.txt"
+#define size 10
 
 int N;
 int M;
 int MIN = 1000;
-int MaTran[sz][sz];
-int Chu_Trinh_Tot_Nhat[sz];
+int MaTran[size][size];
+int Chu_Trinh_Tot_Nhat[size];
 int Quang_Duong_Tot_Nhat = MIN;     // Khởi tạo nên cho nó là một số vô cùng lớn
-bool Chua_Di_Qua[sz];               // Đánh dấu ghé qua hay chưa (true nếu chưa ghé qua)
+bool Chua_Di_Qua[size];               // Đánh dấu ghé qua hay chưa (true nếu chưa ghé qua)
 
 void _readFile(int *n, int *m)
 {
@@ -179,6 +179,7 @@ void _printFile(int *n, int *m)
     for (i = 0; i < *n; i++) fprintf(f,"%c  %c  %d\n",Chu_Trinh_Tot_Nhat[i]+65, Chu_Trinh_Tot_Nhat[i+1]+65, MaTran[Chu_Trinh_Tot_Nhat[i]][Chu_Trinh_Tot_Nhat[i+1]]);
     fclose(f);
 }
+
 int main()
 {
 	system("cls");

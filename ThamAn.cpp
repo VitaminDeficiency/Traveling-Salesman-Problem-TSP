@@ -1,116 +1,121 @@
 #include<stdio.h>
+
+#define _fileName "DuLieu.txt"
+#define _fileName2 "GreedyGrapth.txt"
 #define size 30
 
 typedef struct{
-	float do_dai;
-	int dau, cuoi;
-	int da_dung;
-}canh;
+	int Quang_Duong;
+	int front, rear;
+	bool Chua_Di_Qua;
+}Way;
 
-
-void read_file(char file_name[], canh a[][size], int *n){
-	int tam, i,j;
+void _readFile(Way MaTran[][size], int *n, int *m){
+	int i,j;
 	FILE *f;
-	f=fopen(file_name,"r");
+	f=fopen(_fileName,"r");
 	if (f==NULL){
-		printf("Mo file co loi !!!");
+		printf("File loi!");
 		return;
 	}
-	fscanf(f,"%d",n); //doc so dinh cua do thi n
-	
-	for(i=0; i<*n; i++) fscanf(f,"%d",&tam); //doc dong chi so Cot
-	
+	fscanf(f,"%d%d",n,m);
 	for(i=0; i<*n; i++){
-		fscanf(f,"%d",&tam); //Doc chi so dong
 		for(j=0; j<*n; j++){
-			fscanf(f,"%f", &a[i][j].do_dai);
-			a[i][j].dau=i;
-			a[i][j].cuoi=j;
-			a[i][j].da_dung=0;
-			
+			fscanf(f,"%d", &MaTran[i][j].Quang_Duong);
+			MaTran[i][j].front=i;
+			MaTran[i][j].rear =j;
+			MaTran[i][j].Chua_Di_Qua = false;
 		}
 	}
 	fclose(f);
 }
 
 
-
-void in_ma_tran(canh a[][size],int n){
-	int i, j;
-	printf("Ma tran TRONG SO cua do thi\n");
-	for(i=0;i<n;i++){
-		for(j=0;j<n;j++) printf(" %c%c=%8.2f",a[i][j].dau+65, a[i][j].cuoi+65, a[i][j].do_dai);
-		printf("\n");
-	}
-}
-
-canh tim_canh_nho_nhat(canh a[][size], int n, int i, int *cuoi){
-	canh ca;
+Way tim_canh_nho_nhat(Way MaTran[][size], int n, int i, int *rear){
+	Way ca;
 	int j;
 	float do_dai_nn=3.40282e+38;
 	for(j=0; j<n; j++){
-			if ((i!=j)&&(!a[i][j].da_dung  )&& (a[i][j].do_dai<do_dai_nn)){
-			   do_dai_nn = a[i][j].do_dai;
-			   ca=a[i][j];
-			   a[i][j].da_dung=1;
-			   a[j][i].da_dung=1;
-			   *cuoi=j;
+			if ((i!=j)&&(!MaTran[i][j].Chua_Di_Qua  ) && (MaTran[i][j].Quang_Duong<do_dai_nn)){
+			   do_dai_nn = MaTran[i][j].Quang_Duong;
+			   ca=MaTran[i][j];
+			   MaTran[i][j].Chua_Di_Qua = true;	// AB
+			   MaTran[j][i].Chua_Di_Qua = true;	// BA
+			   *rear=j;
 			}
 	}
 	return ca;
 }
 
-int tao_chu_trinh(canh PA[],int k, int cuoi){
+int tao_chu_trinh(Way PA[],int k, int rear){
 	int t;
 	for (t=0; t<k; t++)
-		if(cuoi==PA[t].dau) return 1;
+		if(rear==PA[t].front) return 1;
 	return 0;
 }
 
-
-void greedy(canh a[][size], int n, int dau, canh PA[]){
-	canh ca;
-	int cuoi, diem_dau=dau, k=0;
+void _greedy(Way MaTran[][size], int n, int front, Way PA[]){
+	Way ca;
+	int rear, diem_dau=front, k=0;
 	while(k<n-1){
-		ca=tim_canh_nho_nhat(a,n,dau, &cuoi);
-		if(!tao_chu_trinh(PA,k, cuoi)) {
+		ca = tim_canh_nho_nhat(MaTran,n,front, &rear);
+		if(!tao_chu_trinh(PA,k, rear)) {
 			PA[k]=ca;
-			dau= cuoi;
+			front= rear;
 			k++;
 		}
 		else {
-			dau=PA[k-1].cuoi;
+			front=PA[k-1].rear;
 		}
 		
-		PA[n-1]=a[cuoi][diem_dau]; //Noi diem cuoi voi diem dau
+		PA[n-1]=MaTran[rear][diem_dau]; //Noi diem rear voi diem front
 	}
 }
 
-
-void in_PA(canh PA[], int n){
-	int i;
-	float sum=0.0;
-	printf("\nPHUONG AN TIM DUOC:\n");
+void _print(Way PA[], int n){
+	int i, sum = 0;
+	printf("Thu tu cac thanh pho: ");
 	for(i=0; i<n; i++){
-		sum+=PA[i].do_dai;
-		printf("Canh %c%c= %8.2f\n", PA[i].dau+65, PA[i].cuoi+65, PA[i].do_dai);
+		sum += PA[i].Quang_Duong;
+		printf("%c -> ", PA[i].front+65);
+		if (i == n-1) printf ("%c",PA[i].rear+65);
 	}
-	printf("Tong do dai cac canh cua chu trinh =%8.2f\n", sum);
+	printf("\nTong do dai quang duong: %d\n", sum);
 }
 
+
+void _printMatrix(Way MaTran[][size],int n){
+	int i, j;
+	printf("Ma tran:\n");
+	for(i=0;i<n;i++){
+		printf("\t");
+		for(j=0;j<n;j++) printf("%d ", MaTran[i][j].Quang_Duong);
+		printf("\n");
+	}
+}
+
+void _printFile(Way PA[], int *n)
+{
+
+    int i, j, sum;
+    FILE *f;
+    f = fopen(_fileName2,"w");
+    for (i = 0; i < *n; i++) fprintf(f,"%c  %c  %d\n",PA[i].front+65,PA[i].rear+65,PA[i].Quang_Duong);
+    fclose(f);
+}
 
 int main(){
-	canh a[size][size];
-	int n;
-	read_file("Dulich.txt",a,&n);
-	in_ma_tran(a,n);
-	canh PA[n];
+	Way MaTran[size][size];
+	int n,m;
+	_readFile(MaTran,&n,&m);
+	_printMatrix(MaTran,n);
+	Way PA[n];
 	char tpxp='a';
 	printf("Nhap diem xuat phat (a,b,c,...):  ");
-	scanf("%c", &tpxp);
-	if (tpxp>=97) tpxp-=32; //Doi chu thuong thanh chu hoa
-	greedy(a, n,tpxp-65,PA); //Doi ki tu thanh so
-	in_PA(PA,n);
+	scanf("%c",&tpxp);
+	if (tpxp >= 97) tpxp -= 32; //Doi chu thuong thanh chu hoa
+	_greedy(MaTran, n,tpxp-65,PA); //Doi ki tu thanh so
+	_print(PA,n);
+	_printFile(PA,&n);
 	return 0;
 }
-

@@ -3,7 +3,7 @@
 
 #define _fileName "DuLieu.txt"
 #define _fileName2 "GreedyGrapth.txt"
-#define size 30
+#define size 20
 
 typedef struct
 {
@@ -84,11 +84,12 @@ void _print(Way PA[], int n)
 {
 	int i, tong = 0;
 	printf("Thu tu cac thanh pho: ");
-	for(i=0; i<n; i++)
+	for(i = 0; i<=n; i++)
 	{
 		tong += PA[i].Quang_Duong;
-		printf("%c -> ", PA[i].front+65);
-		if (i == n-1) printf ("%c",PA[i].rear+65);
+		printf("%c", PA[i].front+65);
+		if (i!=n) printf(" -> ");
+		
 	}
 	printf("\nTong do dai quang duong: %d\n\n", tong);
 }

@@ -1,4 +1,5 @@
-#include<stdio.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #define _fileName "DuLieu.txt"
 #define _fileName2 "GreedyGrapth.txt"
@@ -43,7 +44,7 @@ Way _findEdgeMin(Way MaTran[][size], int n, int i, int *rear)	// Tìm cạnh ti�
 	{
 		if ((i!=j) && (!MaTran[i][j].Chua_Di_Qua) && (MaTran[i][j].Quang_Duong < min))	// Chưa được đi qua và tìm kiếm cạnh tiếp theo nhỏ nhất
 		{
-		    min = MaTran[i][j].Quang_Duong;	// Coi biến min là giá trị nhỏ nhất tạm thời cho mỗi vòng lặp
+		    min = MaTran[i][j].Quang_Duong;		// Coi biến min là giá trị nhỏ nhất tạm thời cho mỗi vòng lặp
 		    edge = MaTran[i][j];				// Đồng thời lưu lại cạnh này vào biến edge
 			MaTran[i][j].Chua_Di_Qua = true;	// AB đánh dấu đã đi qua 
 		    MaTran[j][i].Chua_Di_Qua = true;	// BA như AB do ma trận vuông
@@ -63,7 +64,7 @@ int _createWay(Way PA[], int k, int rear)	// Tạo chu trình đường
 void _greedy(Way MaTran[][size], int n, int front, Way PA[])
 {
 	Way edge;
-	int rear, frontDot = front, k = 0;
+	int rear, frontDot = front, k = 0;				// Giữ lại điểm đầu	
 	while(k < n-1){
 		edge = _findEdgeMin(MaTran,n,front,&rear);	// Cạnh bé nhất được tìm từ nút đang xét
 		if(!_createWay(PA, k, rear))				// Nếu _createWay == 0 thì ...
@@ -89,7 +90,7 @@ void _print(Way PA[], int n)
 		printf("%c -> ", PA[i].front+65);
 		if (i == n-1) printf ("%c",PA[i].rear+65);
 	}
-	printf("\nTong do dai quang duong: %d\n", tong);
+	printf("\nTong do dai quang duong: %d\n\n", tong);
 }
 
 void _printMatrix(Way MaTran[][size],int n)
@@ -116,6 +117,7 @@ void _printFile(Way PA[], int *n)
 
 int main()
 {
+	system("cls");
 	Way MaTran[size][size];
 	int n,m;
 	_readFile(MaTran,&n,&m);

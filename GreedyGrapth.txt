@@ -1,5 +1,5 @@
-B  A  3
 A  D  2
 D  C  5
-C  E  8
-E  B  3
+C  B  4
+B  E  3
+E  A  7

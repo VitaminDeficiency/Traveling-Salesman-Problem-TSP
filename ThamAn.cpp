@@ -2,14 +2,14 @@
 #include <stdlib.h>
 
 #define _fileName "DuLieu.txt"
-#define _fileName2 "GreedyGrapth.txt"
+#define _fileName2 "GreedyGraph.txt"
 #define size 20
 
 typedef struct
 {
 	int Quang_Duong;
 	int front, rear;
-	bool Chua_Di_Qua;
+	bool Da_Di_Qua;
 } Way;
 
 void _readFile(Way MaTran[][size], int *n, int *m)
@@ -30,31 +30,31 @@ void _readFile(Way MaTran[][size], int *n, int *m)
 			fscanf(f,"%d", &MaTran[i][j].Quang_Duong);
 			MaTran[i][j].front=i;
 			MaTran[i][j].rear =j;
-			MaTran[i][j].Chua_Di_Qua = false;
+			MaTran[i][j].Da_Di_Qua = false;
 		}
 	}
 	fclose(f);
 }
 
-Way _findEdgeMin(Way MaTran[][size], int n, int i, int *rear)	// Tìm cạnh tiếp theo nhỏ nhất
+Way _findEdgeMin(Way MaTran[][size], int n, int i, int *rear)
 {
 	Way edge;
 	float min = 10000;
 	for(int j=0; j<n; j++)
 	{
-		if ((i!=j) && (!MaTran[i][j].Chua_Di_Qua) && (MaTran[i][j].Quang_Duong < min))	// Chưa được đi qua và tìm kiếm cạnh tiếp theo nhỏ nhất
+		if ((i!=j) && (!MaTran[i][j].Da_Di_Qua) && (MaTran[i][j].Quang_Duong < min))
 		{
-		    min = MaTran[i][j].Quang_Duong;		// Coi biến min là giá trị nhỏ nhất tạm thời cho mỗi vòng lặp
-		    edge = MaTran[i][j];				// Đồng thời lưu lại cạnh này vào biến edge
-			MaTran[i][j].Chua_Di_Qua = true;	// AB đánh dấu đã đi qua 
-		    MaTran[j][i].Chua_Di_Qua = true;	// BA như AB do ma trận vuông
+		    min = MaTran[i][j].Quang_Duong;
+		    edge = MaTran[i][j];
+			MaTran[i][j].Da_Di_Qua = true;
+		    MaTran[j][i].Da_Di_Qua = true;
 			*rear = j;
 		}
 	}
-	return edge;	// Kết thúc quá trình tìm kiếm ta xuất cạnh bé nhất vừa tìm được
+	return edge;
 }
 
-int _createWay(Way PA[], int k, int rear)	// Tạo chu trình đường
+int _createWay(Way PA[], int k, int rear)
 {
 	int t;
 	for (t=0; t<k; t++) if(rear == PA[t].front) return 1;
@@ -64,10 +64,10 @@ int _createWay(Way PA[], int k, int rear)	// Tạo chu trình đường
 void _greedy(Way MaTran[][size], int n, int front, Way PA[])
 {
 	Way edge;
-	int rear, frontDot = front, k = 0;				// Giữ lại điểm đầu	
+	int rear, frontDot = front, k = 0;
 	while(k < n-1){
-		edge = _findEdgeMin(MaTran,n,front,&rear);	// Cạnh bé nhất được tìm từ nút đang xét
-		if(!_createWay(PA, k, rear))				// Nếu _createWay == 0 thì ...
+		edge = _findEdgeMin(MaTran,n,front,&rear);
+		if(!_createWay(PA, k, rear))
 		{
 			PA[k] = edge;
 			front = rear;
@@ -76,7 +76,7 @@ void _greedy(Way MaTran[][size], int n, int front, Way PA[])
 		{
 			front=PA[k-1].rear;
 		}
-		PA[n-1]=MaTran[rear][frontDot];		// Nối rear với front
+		PA[n-1]=MaTran[rear][frontDot];
 	}
 }
 
@@ -127,8 +127,8 @@ int main()
 	char x;
 	printf("Nhap diem xuat phat (a,b,c,...):  ");
 	scanf("%c",&x);
-	if (x >= 97) x-=32;         // Chữ thường sang chữ hoa
-	_greedy(MaTran, n,x-65,PA); // Đổi kí tự thành số
+	if (x >= 97) x-=32;
+	_greedy(MaTran, n,x-65,PA);
 	_print(PA,n);
 	_printFile(PA,&n);
 	return 0;
